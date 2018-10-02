@@ -32,7 +32,13 @@ class ViewClubs extends Component {
   };
 
   getClubMetricsById = id => {
-    GetClubMetrics(id).then(resp => console.log(resp));
+    GetClubMetrics(id).then(resp => {
+      let metrics = resp.data.items;
+      metrics.forEach(metric => {
+        let date = moment(metric.monthEnd, "MMM YY");
+        console.log(date);
+      });
+    });
   };
 
   componentDidMount() {
@@ -209,7 +215,12 @@ class ViewClubs extends Component {
               <tbody>
                 {this.state.clubs.length > 0 &&
                   this.state.clubs.map((club, index) => (
-                    <ResultRow key={club.id} idx={index} club={club} sendClubRequest={this.getClubMetricsById} />
+                    <ResultRow
+                      key={club.id}
+                      idx={index}
+                      club={club}
+                      sendClubRequest={this.getClubMetricsById}
+                    />
                   ))}
               </tbody>
             </table>

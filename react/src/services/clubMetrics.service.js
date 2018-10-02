@@ -2,7 +2,7 @@ import axios from "axios";
 
 export default function GetClubMetrics(id) {
   return axios({
-    url: "/api/club/" + id,
+    url: "/api/metrics?Club=" + id,
     method: "get"
   });
 }

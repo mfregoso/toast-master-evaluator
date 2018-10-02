@@ -7,22 +7,25 @@ using System.Web.Http;
 using TCM.Services;
 using TCM.Models.Responses;
 using Newtonsoft.Json.Linq;
+using TCM.Services.Interfaces;
+using TCM.Models.Domain;
 
 namespace TCM.Web.Controllers
 {
-    [RoutePrefix("api/club")]
+    [RoutePrefix("api/metrics")]
     public class ClubMetricsController : ApiController
     {
-        readonly ClubSearchService clubSearchService;
-        public ClubMetricsController(ClubSearchService clubSearchService)
+        readonly IClubMetricsService clubMetricsService;
+        public ClubMetricsController(IClubMetricsService clubMetricsService)
         {
-            this.clubSearchService = clubSearchService;
+            this.clubMetricsService = clubMetricsService;
         }       
 
-        [Route("{Id:int}"), HttpGet]
-        public HttpResponseMessage GetByClubId(int Id)
+        [Route, HttpGet]
+        public HttpResponseMessage GetByClubId(int Club)
         {
-            return Request.CreateResponse(HttpStatusCode.OK, "You asked for " + Id.ToString());
+            List<ClubMetrics> metrics = clubMetricsService.GetMetricsById(Club);
+            return Request.CreateResponse(HttpStatusCode.OK, new ItemsResponse<ClubMetrics> { Items = metrics });
         }
     }
 }

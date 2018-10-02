@@ -45,6 +45,7 @@ namespace TCM.Web
             // container.RegisterType<IProductRepository, ProductRepository>();
 
             container.RegisterType<IClubSearchService, ClubSearchService>();
+            container.RegisterType<IClubMetricsService, ClubMetricsService>();
         }
     }
 }
