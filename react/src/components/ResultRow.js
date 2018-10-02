@@ -7,7 +7,7 @@ class ResultRow extends Component {
     return (
       <React.Fragment>
         <tr>
-          <td className="pointer" onClick={() => alert(club.id)}>
+          <td className="pointer">
             <div className="font-weight-bold">{club.Identification.Name}</div>
             <div>{club.MeetingTime}</div>
             <div>{club.MeetingDay}</div>

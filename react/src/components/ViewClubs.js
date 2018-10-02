@@ -2,7 +2,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 //import GetUserLocation from "../services/googleGeolocate.service";
 import FindNearbyClubs from "../services/clubGeoSearch.service";
-import GetClubMetrics from "../services/clubMetrics.service";
+import {
+  GetClubMetrics,
+  GetClubMembership
+} from "../services/clubMetrics.service";
 import GoogleMapReact from "google-map-react";
 import PlacesAutocomplete, {
   geocodeByAddress,
@@ -20,7 +23,8 @@ class ViewClubs extends Component {
     latitude: null,
     longitude: null,
     isGeocoding: false,
-    location: ""
+    location: "",
+    clubMetrics: []
   };
 
   searchClubs = (q, radius, lat, lng) => {
@@ -35,10 +39,13 @@ class ViewClubs extends Component {
     GetClubMetrics(id).then(resp => {
       let metrics = resp.data.items;
       metrics.forEach(metric => {
-        let date = moment(metric.monthEnd, "MMM YY");
+        let date = moment(metric.monthEnd, "MMM YY")
+          .add(1, "month")
+          .format("MM/YY");
         console.log(date);
       });
     });
+    GetClubMembership(id).then(resp => console.log(resp));
   };
 
   componentDidMount() {
@@ -91,13 +98,14 @@ class ViewClubs extends Component {
   assignClubIds = clubs => {
     let assignedIds = clubs.map(club => {
       let assigned = { ...club };
-      assigned.id = parseInt(club.Identification.Id.Value);
+      assigned.id = club.Identification.Id.Value;
+      //assigned.fullId = club.Identification.Id.Value;
       return assigned;
     });
     return assignedIds;
   };
 
-  reformatclubs = clubs => {
+  reformatClubs = clubs => {
     let reformatted = clubs.map(club => {
       let dayOfclub = moment(club.clubDate, "YYYY-MM-DD").format(
         "dddd, MMM D, YYYY"
@@ -213,6 +221,17 @@ class ViewClubs extends Component {
           <div className="results-container">
             <table className="table table-light table-bordered table-striped">
               <tbody>
+                <tr>
+                  <td className="pointer">
+                    <div className="font-weight-bold">
+                      <button
+                        onClick={() => this.getClubMetricsById("00001032")}
+                      >
+                        Test Click
+                      </button>
+                    </div>
+                  </td>
+                </tr>
                 {this.state.clubs.length > 0 &&
                   this.state.clubs.map((club, index) => (
                     <ResultRow

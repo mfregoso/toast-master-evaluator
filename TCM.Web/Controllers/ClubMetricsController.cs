@@ -27,5 +27,12 @@ namespace TCM.Web.Controllers
             List<ClubMetrics> metrics = clubMetricsService.GetMetricsById(Club);
             return Request.CreateResponse(HttpStatusCode.OK, new ItemsResponse<ClubMetrics> { Items = metrics });
         }
+
+        [Route("members"), HttpGet]
+        public HttpResponseMessage GetClubMembershipCount(int Club)
+        {
+            int membershipCount = clubMetricsService.GetClubMembership(Club);
+            return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<int> { Item = membershipCount });
+        }
     }
 }

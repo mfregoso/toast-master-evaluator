@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router";
-import { Button, Popover, PopoverHeader, PopoverBody } from "reactstrap";
+import { Popover, PopoverHeader, PopoverBody } from "reactstrap";
 import "../css/custom.css";
 
 class MapMarkers extends Component {
