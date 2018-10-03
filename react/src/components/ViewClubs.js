@@ -15,6 +15,8 @@ import { Input, InputGroup, InputGroupAddon, Button } from "reactstrap";
 import MapMarkers from "./MapMarkers";
 import moment from "moment";
 import ResultRow from "./ResultRow";
+import MetricsModal from "./MetricsModal";
+import ClubMetrics from "./ClubMetrics";
 import "../css/custom.css";
 
 class ViewClubs extends Component {
@@ -24,8 +26,14 @@ class ViewClubs extends Component {
     longitude: null,
     isGeocoding: false,
     location: "",
-    clubMetrics: []
+    clubMetrics: [],
+    metricsModal: false,
+    clubMembershipCount: "",
+    clubId: "",
+    clubName: ""
   };
+
+  setClubName = clubName => this.setState({ clubName });
 
   searchClubs = (q, radius, lat, lng) => {
     FindNearbyClubs(q, radius, lat, lng).then(resp => {
@@ -36,51 +44,55 @@ class ViewClubs extends Component {
   };
 
   getClubMetricsById = id => {
+    this.setState({ metricsModal: true, clubId: id });
     GetClubMetrics(id).then(resp => {
       let metrics = resp.data.items;
-      metrics.forEach(metric => {
+      let clubMetrics = metrics.map(metric => {
         let date = moment(metric.monthEnd, "MMM YY")
           .add(1, "month")
-          .format("MM/YY");
-        console.log(date);
+          .format("M/YY");
+        const newObj = { ...metric, date };
+        return newObj;
       });
+      this.setState({ clubMetrics });
     });
-    GetClubMembership(id).then(resp => console.log(resp));
+    GetClubMembership(id).then(resp =>
+      this.setState({ clubMembershipCount: resp.data.item })
+    );
+  };
+
+  toggleModal = isOpen => {
+    if (isOpen === false) {
+      this.setState({
+        metricsModal: isOpen,
+        clubId: "",
+        clubName: "",
+        clubMembershipCount: "",
+        clubMetrics: []
+      });
+    } else {
+      this.setState({ metricsModal: isOpen });
+    }
   };
 
   componentDidMount() {
-    //
     if (this.props.userLongitude && this.props.userLatitude) {
       this.setState({
         latitude: this.props.userLatitude,
         longitude: this.props.userLongitude
       });
-      // FindNearbyClubs(
-      //   "",
-      //   this.props.userLatitude,
-      //   this.props.userLongitude,
-      //   10
-      // ).then(resp => console.log(resp));
-    }
-    if (!this.props.userLongitude && !this.props.userLatitude) {
-      //this.props.hiclub.push("/");
-      // GetUserLocation().then(resp => {
-      //   let { lat, lng } = resp.data.location;
-      //   this.props.sendLatitude(lat);
-      //   this.props.sendLongitude(lng);
-      // });
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.userLatitude !== prevProps.userLatitude) {
-      // catch Location Change => re-render map & maybe get new data from server
-      console.log(this.props.userLatitude + ", " + this.props.userLongitude);
+      this.searchClubs(
+        "",
+        7,
+        this.props.userLatitude,
+        this.props.userLongitude
+      );
+    } else if (!this.props.userLongitude && !this.props.userLatitude) {
+      this.props.history.push("/");
     }
   }
 
   handleMapsAutocomplete = location => {
-    //let nameOnly = location.substr(0, location.indexOf(","));
     this.setState({ location });
     geocodeByAddress(location)
       .then(results => getLatLng(results[0]))
@@ -99,23 +111,9 @@ class ViewClubs extends Component {
     let assignedIds = clubs.map(club => {
       let assigned = { ...club };
       assigned.id = club.Identification.Id.Value;
-      //assigned.fullId = club.Identification.Id.Value;
       return assigned;
     });
     return assignedIds;
-  };
-
-  reformatClubs = clubs => {
-    let reformatted = clubs.map(club => {
-      let dayOfclub = moment(club.clubDate, "YYYY-MM-DD").format(
-        "dddd, MMM D, YYYY"
-      );
-      return {
-        ...club,
-        dayOfclub
-      };
-    });
-    return reformatted;
   };
 
   resetLocation = () => this.setState({ location: "" });
@@ -124,34 +122,27 @@ class ViewClubs extends Component {
     this.setState({ location });
   };
 
-  handleMapChanges = info => {
-    let zoom = info.zoom;
-    let mapLatitude = info.center.lat;
-    let mapLongitude = info.center.lng;
-    let ne = info.bounds.ne;
-    let nw = info.bounds.nw;
-    let se = info.bounds.se;
-    let sw = info.bounds.sw;
-    console.log(`${ne.lng} ${ne.lat}`);
-    console.log(`${nw.lng} ${nw.lat}`);
-    console.log(`${sw.lng} ${sw.lat}`);
-    console.log(`${se.lng} ${se.lat}`);
-    // this.props.sendMapZoom(zoom);
-    // this.props.sendMapLatitude(mapLatitude);
-    // this.props.sendMapLongitude(mapLongitude);
-  };
+  // handleMapChanges = info => {
+  //   let zoom = info.zoom;
+  //   let mapLatitude = info.center.lat;
+  //   let mapLongitude = info.center.lng;
+  //   let ne = info.bounds.ne;
+  //   let nw = info.bounds.nw;
+  //   let se = info.bounds.se;
+  //   let sw = info.bounds.sw;
+  //   console.log(`${ne.lng} ${ne.lat}`);
+  //   console.log(`${nw.lng} ${nw.lat}`);
+  //   console.log(`${sw.lng} ${sw.lat}`);
+  //   console.log(`${se.lng} ${se.lat}`);
+  //   // this.props.sendMapZoom(zoom);
+  //   // this.props.sendMapLatitude(mapLatitude);
+  //   // this.props.sendMapLongitude(mapLongitude);
+  // };
 
   render() {
     const mapOptions = {
       scrollwheel: true,
       minZoom: 11
-      // hide: [
-      //   {
-      //     featureType: "all",
-      //     elementType: "labels",
-      //     stylers: [{ visibility: "off" }]
-      //   }
-      // ]
     };
     return (
       <div className="container-fluid view-spacer">
@@ -221,17 +212,6 @@ class ViewClubs extends Component {
           <div className="results-container">
             <table className="table table-light table-bordered table-striped">
               <tbody>
-                <tr>
-                  <td className="pointer">
-                    <div className="font-weight-bold">
-                      <button
-                        onClick={() => this.getClubMetricsById("00001032")}
-                      >
-                        Test Click
-                      </button>
-                    </div>
-                  </td>
-                </tr>
                 {this.state.clubs.length > 0 &&
                   this.state.clubs.map((club, index) => (
                     <ResultRow
@@ -239,6 +219,7 @@ class ViewClubs extends Component {
                       idx={index}
                       club={club}
                       sendClubRequest={this.getClubMetricsById}
+                      setClubName={this.setClubName}
                     />
                   ))}
               </tbody>
@@ -274,11 +255,26 @@ class ViewClubs extends Component {
                   lat={club.Address.Coordinates.Latitude}
                   lng={club.Address.Coordinates.Longitude}
                   club={club}
+                  sendClubRequest={this.getClubMetricsById}
+                  setClubName={this.setClubName}
                 />
               );
             })}
           </GoogleMapReact>
         </div>
+        <MetricsModal
+          clubId={this.state.clubId}
+          className="fluid-container col-xl-12 col-lg-12"
+          showModal={this.state.metricsModal}
+          toggle={() => this.toggleModal(false)}
+          memberCount={this.state.clubMembershipCount}
+          clubName={this.state.clubName}
+        >
+          {this.state.clubId &&
+            this.state.clubMetrics.length > 0 && (
+              <ClubMetrics metrics={this.state.clubMetrics} />
+            )}
+        </MetricsModal>
       </div>
     );
   }

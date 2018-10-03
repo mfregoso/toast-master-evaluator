@@ -17,8 +17,11 @@ class ResultRow extends Component {
           </td>
           <td className="align-middle">
             <button
-              className="btn btn-sm btn-info"
-              onClick={() => this.props.sendClubRequest(club.id)}
+              className="btn btn-sm btn-danger"
+              onClick={() => {
+                this.props.sendClubRequest(club.id);
+                this.props.setClubName(club.Identification.Name);
+              }}
             >
               View
             </button>

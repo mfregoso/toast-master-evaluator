@@ -42,25 +42,16 @@ class MapMarkers extends Component {
             {club.Identification.Name}
           </PopoverHeader>
           <PopoverBody>
-            {/* <div className="font-weight-bold">{club.thankeeName},</div>
-            <div
-              className="marker-desc"
-              style={{
-                whiteSpace: "pre-wrap",
-                width: "100%"
+            <button
+              className="btn btn-sm btn-danger"
+              onClick={() => {
+                this.props.sendClubRequest(club.id);
+                this.props.setClubName(club.Identification.Name);
+                this.toggle();
               }}
             >
-              {club.description}
-            </div>
-            <div className="font-weight-bold">- {club.posterName}</div>
-            <div className="text-center marker-spacer">
-              <button
-                className="btn btn-sm btn-block btn-success"
-                onClick={() => this.props.hiclub.push("/edit/" + club.id)}
-              >
-                See More Details
-              </button>
-            </div> */}
+              See Club Details
+            </button>
           </PopoverBody>
         </Popover>
       </span>

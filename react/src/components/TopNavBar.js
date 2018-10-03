@@ -40,7 +40,7 @@ class TopNavBar extends Component {
                 <NavLink
                   href="javascript:(0)"
                   className="pointer"
-                  active={location.pathname === "/find"}
+                  active={true}
                   onClick={() => this.props.history.push("/find")}
                 >
                   Find A Club
