@@ -50,7 +50,7 @@ class ViewClubs extends Component {
       let clubMetrics = metrics.map(metric => {
         let date = moment(metric.monthEnd, "MMM YY")
           .add(1, "month")
-          .format("M/YY");
+          .format("MMM [']YY");
         const newObj = { ...metric, date };
         return newObj;
       });

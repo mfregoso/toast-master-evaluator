@@ -5,6 +5,12 @@
 *.csproj merge=binary
 dest/
 
+# sensitive files
+TCM.Web/Properties/PublishProfiles
+
+# react build output
+TCM.Web/Client
+
 # User-specific files
 *.suo
 *.user
