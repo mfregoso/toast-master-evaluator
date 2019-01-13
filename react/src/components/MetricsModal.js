@@ -3,7 +3,7 @@ import { Modal, ModalHeader, ModalBody } from "reactstrap";
 
 class MetricsModal extends Component {
   titlePlaceholder = () => {
-    if (this.props.memberCount) {
+    if (this.props.memberCount || this.props.memberCount === 0) {
       return (
         <React.Fragment>
           {this.props.clubName} currently has {this.props.memberCount} members

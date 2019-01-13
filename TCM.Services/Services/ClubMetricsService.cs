@@ -65,9 +65,9 @@ namespace TCM.Services
                     bool hasCount = int.TryParse(data.TextContent, out membershipCount);
                     System.Diagnostics.Debug.WriteLine(data.TextContent);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine("toastmasters server error");
+                    System.Diagnostics.Debug.WriteLine(ex);
                 }
             }
 

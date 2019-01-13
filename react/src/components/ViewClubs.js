@@ -30,7 +30,8 @@ class ViewClubs extends Component {
     metricsModal: false,
     clubMembershipCount: "",
     clubId: "",
-    clubName: ""
+    clubName: "",
+    loadingMetrics: true
   };
 
   setClubName = clubName => this.setState({ clubName });
@@ -45,17 +46,19 @@ class ViewClubs extends Component {
 
   getClubMetricsById = id => {
     this.setState({ metricsModal: true, clubId: id });
-    GetClubMetrics(id).then(resp => {
-      let metrics = resp.data.items;
-      let clubMetrics = metrics.map(metric => {
-        let date = moment(metric.monthEnd, "MMM YY")
-          .add(1, "month")
-          .format("MMM [']YY");
-        const newObj = { ...metric, date };
-        return newObj;
-      });
-      this.setState({ clubMetrics });
-    });
+    GetClubMetrics(id)
+      .then(resp => {
+        let metrics = resp.data.items;
+        let clubMetrics = metrics.map(metric => {
+          let date = moment(metric.monthEnd, "MMM YY")
+            .add(1, "month")
+            .format("MMM [']YY");
+          const newObj = { ...metric, date };
+          return newObj;
+        });
+        this.setState({ clubMetrics, loadingMetrics: false });
+      })
+      .catch(err => this.setState({ loadingMetrics: false }));
     GetClubMembership(id).then(resp =>
       this.setState({ clubMembershipCount: resp.data.item })
     );
@@ -68,7 +71,8 @@ class ViewClubs extends Component {
         clubId: "",
         clubName: "",
         clubMembershipCount: "",
-        clubMetrics: []
+        clubMetrics: [],
+        loadingMetrics: true
       });
     } else {
       this.setState({ metricsModal: isOpen });
@@ -270,10 +274,12 @@ class ViewClubs extends Component {
           memberCount={this.state.clubMembershipCount}
           clubName={this.state.clubName}
         >
-          {this.state.clubId &&
-            this.state.clubMetrics.length > 0 && (
-              <ClubMetrics metrics={this.state.clubMetrics} />
-            )}
+          {this.state.clubId && (
+            <ClubMetrics
+              metrics={this.state.clubMetrics}
+              isLoading={this.state.loadingMetrics}
+            />
+          )}
         </MetricsModal>
       </div>
     );
