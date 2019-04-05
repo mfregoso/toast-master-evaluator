@@ -12,7 +12,7 @@ import {
 class ClubMetrics extends Component {
   render() {
     const { metrics, isLoading } = this.props;
-    if (!isLoading && metrics.length > 0) {
+    if (!isLoading && metrics.length) {
       return (
         <div className="mx-auto text-center">
           <h2 className="text-center">Previous Years Membership Count</h2>

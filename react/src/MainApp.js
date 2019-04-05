@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Switch, Route } from "react-router-dom"; // use Redirect?
+import { Switch, Route } from "react-router-dom";
 import NavBar from "./components/TopNavBar";
 import LandingPage from "./components/LandingPage";
 import ViewClubs from "./components/ViewClubs";
