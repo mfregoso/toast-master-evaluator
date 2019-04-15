@@ -25,6 +25,10 @@ steps:
     npm run build
   displayName: 'npm install and build'
 
+- task: BatchScript@1
+  inputs:
+    filename: 'copy-client.cmd'
+
 - task: NuGetToolInstaller@0
 
 - task: NuGetCommand@2
