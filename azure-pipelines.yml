@@ -18,13 +18,18 @@ steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '10.x'
-    workingDir: 'react'
   displayName: 'Install Node.js'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: 'react'
+
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    workingDir: 'react'
+    customCommand: 'run build'
 
 - task: BatchScript@1
   inputs:
