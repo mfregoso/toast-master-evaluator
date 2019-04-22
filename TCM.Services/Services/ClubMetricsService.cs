@@ -1,10 +1,8 @@
-﻿using AngleSharp.Parser.Html;
+﻿using AngleSharp.Html.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using TCM.Models.Domain;
 using TCM.Services.Interfaces;
 
@@ -23,7 +21,7 @@ namespace TCM.Services
                 {
                     var tmTools = client.GetStringAsync(BaseUrl + id).Result;
                     var parseHtml = new HtmlParser();
-                    var dataTable = parseHtml.Parse(tmTools);
+                    var dataTable = parseHtml.ParseDocument(tmTools);
                     var dataRows = dataTable.QuerySelector("table");
                     var data = dataRows.QuerySelectorAll("tr").Skip(3);
                     foreach (var row in data)
@@ -58,7 +56,7 @@ namespace TCM.Services
                 {
                     var clubReport = client.GetStreamAsync(BaseUrl + id).Result;
                     var parseHtml = new HtmlParser();
-                    var dataTable = parseHtml.Parse(clubReport);
+                    var dataTable = parseHtml.ParseDocument(clubReport);
                     var dataColumn = dataTable.QuerySelectorAll("table.clubStatusChart")[1];
                     var dataRow = dataColumn.QuerySelectorAll("table tr")[1];
                     var data = dataRow.QuerySelectorAll("td.chart_table_big_numbers")[1];
