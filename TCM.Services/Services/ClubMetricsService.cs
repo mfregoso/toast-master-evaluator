@@ -10,7 +10,7 @@ namespace TCM.Services
 {
     public class ClubMetricsService : IClubMetricsService
     {
-        public List<ClubMetrics> GetMetricsById(int id)
+        public List<ClubMetrics> GetMetricsById(string id)
         {
             string BaseUrl = "https://www.marshalls.org/tmtools/DCP_Hist.cgi?mon=cur&club=";
             
@@ -45,7 +45,7 @@ namespace TCM.Services
             }
         }
 
-        public int GetClubMembership(int id)
+        public int GetClubMembership(string id)
         {
             string BaseUrl = "http://dashboards.toastmasters.org/ClubReport.aspx?id=";
             int membershipCount = 0;
