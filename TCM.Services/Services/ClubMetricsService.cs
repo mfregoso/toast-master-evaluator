@@ -45,10 +45,10 @@ namespace TCM.Services
             }
         }
 
-        public int GetClubMembership(string id)
+        public int? GetClubMembership(string id)
         {
             string BaseUrl = "http://dashboards.toastmasters.org/ClubReport.aspx?id=";
-            int membershipCount = 0;
+            int? membershipCount = null;
 
             using (var client = new HttpClient())
             {
@@ -60,7 +60,7 @@ namespace TCM.Services
                     var dataColumn = dataTable.QuerySelectorAll("table.clubStatusChart")[1];
                     var dataRow = dataColumn.QuerySelectorAll("table tr")[1];
                     var data = dataRow.QuerySelectorAll("td.chart_table_big_numbers")[1];
-                    bool hasCount = int.TryParse(data.TextContent, out membershipCount);
+                    membershipCount = int.TryParse(data.TextContent, out int count) ? count : (int?)null;
                     System.Diagnostics.Debug.WriteLine(data.TextContent);
                 }
                 catch (Exception ex)

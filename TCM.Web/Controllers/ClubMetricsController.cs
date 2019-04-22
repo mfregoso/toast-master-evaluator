@@ -31,8 +31,8 @@ namespace TCM.Web.Controllers
         [Route("members"), HttpGet]
         public HttpResponseMessage GetClubMembershipCount(string Club)
         {
-            int membershipCount = clubMetricsService.GetClubMembership(Club);
-            return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<int> { Item = membershipCount });
+            int? membershipCount = clubMetricsService.GetClubMembership(Club);
+            return Request.CreateResponse(HttpStatusCode.OK, new ItemResponse<int?> { Item = membershipCount });
         }
     }
 }

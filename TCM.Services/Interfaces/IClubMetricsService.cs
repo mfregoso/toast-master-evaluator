@@ -10,6 +10,6 @@ namespace TCM.Services.Interfaces
     public interface IClubMetricsService
     {
         List<ClubMetrics> GetMetricsById(string id);
-        int GetClubMembership(string id);
+        int? GetClubMembership(string id);
     }
 }
